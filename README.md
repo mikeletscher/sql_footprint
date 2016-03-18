@@ -10,7 +10,7 @@ made will significantly change the way you're querying the database.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'sql_footprint'
+gem 'sql_footprint', group: [:development, :test]
 ```
 
 And then execute:
@@ -31,3 +31,5 @@ end
 After running your specs you'll find a 'footprint.sql' file in your project.
 Adding this to your Git repository can be very useful so you can include the diff of the footprint
 as part of your code review.
+
+DO NOT run SqlFootprint in production!
