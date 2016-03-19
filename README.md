@@ -1,4 +1,4 @@
-# SqlFootprint
+# SqlFootprint [![Build Status](https://travis-ci.org/covermymeds/sql_footprint.svg?branch=master)](https://travis-ci.org/covermymeds/sql_footprint)
 
 This gem allows you to keep a "footprint" of the sql queries that your application runs.
 It's like logging all the sql you're executing except that we remove all the value parameters
