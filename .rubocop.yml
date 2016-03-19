@@ -1,0 +1,10 @@
+require: rubocop-rspec
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+
+Metrics/LineLength:
+  Max: 100
+
+Documentation:
+  Enabled: false

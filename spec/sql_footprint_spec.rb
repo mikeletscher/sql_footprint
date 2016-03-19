@@ -16,18 +16,20 @@ describe SqlFootprint do
 
     it 'formats inserts' do
       Widget.create!
-      expect(sql).to eq "INSERT INTO \"widgets\" (\"created_at\", \"updated_at\") VALUES (?, ?)"
-
+      expect(sql).to eq 'INSERT INTO "widgets" ("created_at", "updated_at") VALUES (?, ?)'
     end
 
     it 'formats selects' do
       Widget.where(name: SecureRandom.uuid, quantity: 1).last
-      expect(sql).to eq "SELECT \"widgets\".* FROM \"widgets\" WHERE \"widgets\".\"name\" = 'value-redacted' AND \"widgets\".\"quantity\" = number-redacted ORDER BY \"widgets\".\"id\" DESC LIMIT 1"
+      expect(sql).to eq 'SELECT "widgets".* FROM "widgets" WHERE "widgets"."name" = '\
+        "'value-redacted' AND \"widgets\".\"quantity\" = number-redacted ORDER BY \"widgets"\
+        '"."id" DESC LIMIT 1'
     end
 
     it 'formats IN clauses' do
       Widget.where(name: [SecureRandom.uuid, SecureRandom.uuid]).last
-      expect(sql).to eq "SELECT \"widgets\".* FROM \"widgets\" WHERE \"widgets\".\"name\" IN (values-redacted) ORDER BY \"widgets\".\"id\" DESC LIMIT 1"
+      expect(sql).to eq 'SELECT "widgets".* FROM "widgets" WHERE "widgets"."name" '\
+        'IN (values-redacted) ORDER BY "widgets"."id" DESC LIMIT 1'
     end
 
     it 'dedupes the same sql' do
@@ -40,6 +42,14 @@ describe SqlFootprint do
       Widget.where(name: SecureRandom.uuid, quantity: 1).last
       Widget.create!
       expect(logger.logs.first).to include('INSERT INTO')
+    end
+
+    it 'works with joins' do
+      Widget.joins(:cogs).where(name: SecureRandom.uuid).load
+      expected = 'SELECT "widgets".* FROM "widgets" INNER JOIN "'\
+        'cogs" ON "cogs"."widget_id" = "widgets"."id" WHERE '\
+        "\"widgets\".\"name\" = 'value-redacted'"
+      expect(logger.logs.first).to eq expected
     end
   end
 
@@ -60,7 +70,7 @@ describe SqlFootprint do
       Widget.last
       described_class.stop
       log = File.read('footprint.sql')
-      expect(log).to_not include('INSERT INTO')
+      expect(log).not_to include('INSERT INTO')
     end
   end
 end

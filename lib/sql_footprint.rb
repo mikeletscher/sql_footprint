@@ -1,4 +1,4 @@
-require "sql_footprint/version"
+require 'sql_footprint/version'
 
 module SqlFootprint
   def self.start
@@ -24,16 +24,22 @@ module SqlFootprint
     attr_reader :logs
 
     def error param
-      fail param
+      raise param
     end
 
     def debug text
       if sql? text
         sql = format_sql(text)
-        logs << sql if !logs.include?(sql)
+        logs << sql unless logs.include?(sql)
         logs.sort!
       end
     end
+
+    def debug?
+      true
+    end
+
+    private
 
     def sql? text
       /SQL/.match(text) ||
@@ -42,40 +48,35 @@ module SqlFootprint
 
     def format_sql text
       strip_values(text).split("\e\[0m")
-        .select { |t| !t.include?('SQL') }
-        .select { |t| !/Load\s\(/.match(t) }
-        .first
-        .gsub(/\e\[1m/, '')
-        .strip
+                        .select { |t| !t.include?('SQL') }
+                        .find { |t| !/Load\s\(/.match(t) }
+                        .gsub(/\e\[1m/, '')
+                        .strip
     end
 
     def strip_values text
       text = text.gsub(/\[\[.*\]\]/, '')
       text = strip_string_values(text)
       text = strip_integer_values(text)
-      text = strip_in_clause_values(text)
+      strip_in_clause_values(text)
     end
 
     def strip_in_clause_values text
-      text.gsub(/\sIN\s\((.*)\)/) do |match|
-        " IN (values-redacted)"
+      text.gsub(/\sIN\s\((.*)\)/) do |_match|
+        ' IN (values-redacted)'
       end
     end
 
     def strip_integer_values text
-      text.gsub(/\s\=\s([0-9]+)/) do |match|
-        " = number-redacted"
+      text.gsub(/\s\=\s([0-9]+)/) do |_match|
+        ' = number-redacted'
       end
     end
 
     def strip_string_values text
-      text.gsub(/\s\=\s\'(.*)\'/) do |match|
+      text.gsub(/\s\=\s\'(.*)\'/) do |_match|
         " = 'value-redacted'"
       end
-    end
-
-    def debug?
-      true
     end
   end
 end
