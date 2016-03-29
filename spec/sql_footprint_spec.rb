@@ -51,6 +51,14 @@ describe SqlFootprint do
         "\"widgets\".\"name\" = 'value-redacted'"
       expect(logger.logs.first).to eq expected
     end
+
+    it 'can exclude some statements' do
+      Widget.where(name: SecureRandom.uuid).last
+      widget = described_class.exclude { Widget.create! }
+      expect(widget).to be_a(Widget)
+      expect(logger.logs.length).to eq 1
+      expect(logger.logs.first).to start_with('SELECT')
+    end
   end
 
   describe '.stop' do

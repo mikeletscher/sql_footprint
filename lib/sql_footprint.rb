@@ -16,6 +16,13 @@ module SqlFootprint
     end
   end
 
+  def self.exclude
+    ActiveRecord::Base.logger = @original_logger
+    yield
+  ensure
+    ActiveRecord::Base.logger = @logger
+  end
+
   class Logger
     def initialize
       @logs = []
