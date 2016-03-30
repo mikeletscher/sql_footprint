@@ -29,7 +29,28 @@ end
 ```
 
 After running your specs you'll find a 'footprint.sql' file in your project.
-Adding this to your Git repository can be very useful so you can include the diff of the footprint
-as part of your code review.
+
+#### Excluding Setup Code
+
+If you want to exclude queries that your tests generate for fixture data, you can use the ```.exclude``` method.  For example:
+```
+before do
+  SqlFootprint.exclude do
+    Model.create!(args*) # this query will not be included in your footprint
+  end
+end
+```
+
+Or if you're using FactoryGirl you could do something like this:
+```
+RSpec.configure do |config|
+  module FactoryBoy
+    def create(*args)
+      SqlFootprint.exclude { FactoryGirl.create(*args) }
+    end
+  end
+  config.include FactoryBoy
+end
+```
 
 DO NOT run SqlFootprint in production!
