@@ -1,88 +1,64 @@
 require 'sql_footprint/version'
+require 'set'
+require 'active_support/notifications'
 
 module SqlFootprint
-  def self.start
-    @original_logger = ActiveRecord::Base.logger
-    @logger = Logger.new
-    ActiveRecord::Base.logger = @logger
+  ActiveSupport::Notifications.subscribe('sql.active_record') do |_, _, _, _, payload|
+    capture payload.fetch(:sql)
   end
 
-  def self.stop
-    ActiveRecord::Base.logger = @original_logger
-    File.open('footprint.sql', 'w') do |f|
-      @logger.logs.each do |log|
-        f.puts log
-      end
-    end
-  end
-
-  def self.exclude
-    ActiveRecord::Base.logger = @original_logger
-    yield
-  ensure
-    ActiveRecord::Base.logger = @logger
-  end
-
-  class Logger
-    def initialize
-      @logs = []
+  class << self
+    def start
+      @capture = true
+      @lines   = Set.new
     end
 
-    attr_reader :logs
-
-    def error param
-      raise param
-    end
-
-    def debug text
-      if sql? text
-        sql = format_sql(text)
-        logs << sql unless logs.include?(sql)
-        logs.sort!
+    def stop
+      @capture = false
+      File.open('footprint.sql', 'w') do |f|
+        lines.each do |line|
+          f.puts line
+        end
       end
     end
 
-    def debug?
-      true
+    def exclude
+      @capture = false
+      yield
+    ensure
+      @capture = true
     end
 
-    private
-
-    SQL_REGEXS = [/SQL/, /Load\s\(/, /Exists\s\(/].map(&:freeze).freeze
-
-    def sql? text
-      SQL_REGEXS.any? { |regex| regex.match(text) }
+    def lines
+      @lines.sort
     end
 
-    def format_sql text
-      strip_values(text).split("\e\[0m")
-                        .select { |t| !t.include?('SQL') }
-                        .find { |t| !/Load\s\(/.match(t) }
-                        .gsub(/\e\[1m/, '')
-                        .strip
+    def capture sql
+      return unless @capture
+      @lines << strip_values(sql)
     end
 
-    def strip_values text
-      text = text.gsub(/\[\[.*\]\]/, '')
-      text = strip_string_values(text)
-      text = strip_integer_values(text)
-      strip_in_clause_values(text)
+    def strip_values sql
+      sql = sql.gsub(/\[\[.*\]\]/, '')
+      sql = strip_string_values(sql)
+      sql = strip_integer_values(sql)
+      strip_in_clause_values(sql)
     end
 
-    def strip_in_clause_values text
-      text.gsub(/\sIN\s\((.*)\)/) do |_match|
+    def strip_in_clause_values sql
+      sql.gsub(/\sIN\s\((.*)\)/) do |_match|
         ' IN (values-redacted)'
       end
     end
 
-    def strip_integer_values text
-      text.gsub(/\s\=\s([0-9]+)/) do |_match|
+    def strip_integer_values sql
+      sql.gsub(/\s\=\s([0-9]+)/) do |_match|
         ' = number-redacted'
       end
     end
 
-    def strip_string_values text
-      text.gsub(/\s\=\s\'(.*)\'/) do |_match|
+    def strip_string_values sql
+      sql.gsub(/\s\=\s\'(.*)\'/) do |_match|
         " = 'value-redacted'"
       end
     end
