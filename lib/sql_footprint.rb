@@ -48,9 +48,10 @@ module SqlFootprint
 
     private
 
+    SQL_REGEXS = [/SQL/, /Load\s\(/, /Exists\s\(/].map(&:freeze).freeze
+
     def sql? text
-      /SQL/.match(text) ||
-        /Load\s\(/.match(text)
+      SQL_REGEXS.any? { |regex| regex.match(text) }
     end
 
     def format_sql text

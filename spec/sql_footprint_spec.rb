@@ -14,6 +14,11 @@ describe SqlFootprint do
       expect(logger.logs.length).to eq 1
     end
 
+    it 'logs exists sql' do
+      Widget.exists? name: 'a'
+      expect(logger.logs.length).to eq 1
+    end
+
     it 'formats inserts' do
       Widget.create!
       expect(sql).to eq 'INSERT INTO "widgets" ("created_at", "updated_at") VALUES (?, ?)'
