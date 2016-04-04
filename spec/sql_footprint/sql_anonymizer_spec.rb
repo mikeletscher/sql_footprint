@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe SqlFootprint::SqlAnonymizer do
-
   let(:anonymizer) { described_class.new }
 
   it 'formats IN clauses' do
