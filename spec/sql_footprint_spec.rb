@@ -44,6 +44,15 @@ describe SqlFootprint do
       )
     end
 
+    it 'formats LIKE clauses' do
+      Widget.where(['name LIKE ?', SecureRandom.uuid]).last
+      expect(described_class.lines).to include(
+        'SELECT  "widgets".* FROM "widgets" ' \
+        'WHERE (name LIKE \'value-redacted\')  ' \
+        'ORDER BY "widgets"."id" DESC LIMIT 1'
+      )
+    end
+
     it 'dedupes the same sql' do
       expect do
         Widget.create!
