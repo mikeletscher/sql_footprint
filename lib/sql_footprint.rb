@@ -39,6 +39,5 @@ module SqlFootprint
       return unless @capture
       @lines << @anonymizer.anonymize(sql)
     end
-
   end
 end
