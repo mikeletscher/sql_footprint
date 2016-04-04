@@ -11,8 +11,8 @@ module SqlFootprint
   class << self
     def start
       @anonymizer = SqlAnonymizer.new
-      @capture = true
-      @lines   = Set.new
+      @capture    = true
+      @lines      = Set.new
     end
 
     def stop
