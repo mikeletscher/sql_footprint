@@ -1,4 +1,5 @@
 require 'sql_footprint/version'
+require 'sql_footprint/sql_anonymizer'
 require 'set'
 require 'active_support/notifications'
 
@@ -9,6 +10,7 @@ module SqlFootprint
 
   class << self
     def start
+      @anonymizer = SqlAnonymizer.new
       @capture = true
       @lines   = Set.new
     end
@@ -35,32 +37,8 @@ module SqlFootprint
 
     def capture sql
       return unless @capture
-      @lines << strip_values(sql)
+      @lines << @anonymizer.anonymize(sql)
     end
 
-    def strip_values sql
-      sql = sql.gsub(/\[\[.*\]\]/, '')
-      sql = strip_string_values(sql)
-      sql = strip_integer_values(sql)
-      strip_in_clause_values(sql)
-    end
-
-    def strip_in_clause_values sql
-      sql.gsub(/\sIN\s\((.*)\)/) do |_match|
-        ' IN (values-redacted)'
-      end
-    end
-
-    def strip_integer_values sql
-      sql.gsub(/\s\=\s([0-9]+)/) do |_match|
-        ' = number-redacted'
-      end
-    end
-
-    def strip_string_values sql
-      sql.gsub(/\s'(.*)\'/) do |_match|
-        " 'value-redacted'"
-      end
-    end
   end
 end
