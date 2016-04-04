@@ -58,8 +58,8 @@ module SqlFootprint
     end
 
     def strip_string_values sql
-      sql.gsub(/\s\=\s\'(.*)\'/) do |_match|
-        " = 'value-redacted'"
+      sql.gsub(/\s'(.*)\'/) do |_match|
+        " 'value-redacted'"
       end
     end
   end
