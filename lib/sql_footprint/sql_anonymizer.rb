@@ -7,7 +7,6 @@ module SqlFootprint
     }.freeze
 
     def anonymize sql
-      # subs => [key, value]
       GSUBS.reduce(sql) do |s, (regex, replacement)|
         s.gsub regex, replacement
       end
