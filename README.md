@@ -21,7 +21,7 @@ And then execute:
 
 Typically, you would want to run this while you're running your specs.
 For example w/ RSpec:
-```
+```ruby
 RSpec.configure do |config|
   config.before(:suite) { SqlFootprint.start }
   config.after(:suite) { SqlFootprint.stop }
@@ -33,7 +33,7 @@ After running your specs you'll find a 'footprint.sql' file in your project.
 #### Excluding Setup Code
 
 If you want to exclude queries that your tests generate for fixture data, you can use the ```.exclude``` method.  For example:
-```
+```ruby
 before do
   SqlFootprint.exclude do
     Model.create!(args*) # this query will not be included in your footprint
@@ -42,7 +42,7 @@ end
 ```
 
 Or if you're using FactoryGirl you could do something like this:
-```
+```ruby
 RSpec.configure do |config|
   module FactoryBoy
     def create(*args)
