@@ -3,6 +3,9 @@ require 'set'
 require 'active_support/notifications'
 
 module SqlFootprint
+  FILENAME = 'footprint.sql'.freeze
+  NEWLINE = "\n".freeze
+
   ActiveSupport::Notifications.subscribe('sql.active_record') do |_, _, _, _, payload|
     capture payload.fetch(:sql)
   end
@@ -15,11 +18,7 @@ module SqlFootprint
 
     def stop
       @capture = false
-      File.open('footprint.sql', 'w') do |f|
-        lines.each do |line|
-          f.puts line
-        end
-      end
+      File.write FILENAME, lines.join(NEWLINE)
     end
 
     def exclude
