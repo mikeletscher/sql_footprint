@@ -8,7 +8,7 @@ describe SqlFootprint::SqlFilter do
     expect(filter.capture?(query)).to be_falsey
   end
 
-  ['SELECT', 'INSERT', 'UPDATE', 'DELETE'].each do |prefix|
+  %w(SELECT INSERT UPDATE DELETE).each do |prefix|
     it "does not filter #{prefix} queries" do
       query = "#{prefix} #{SecureRandom.uuid}"
       expect(filter.capture?(query)).to be_truthy

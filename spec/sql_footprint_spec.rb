@@ -69,9 +69,10 @@ describe SqlFootprint do
     it 'does not write SHOW queries' do
       begin
         Widget.connection.execute("SHOW #{SecureRandom.uuid}")
-      rescue # We don't care about the validity of the SQL
+      rescue
+        "We don't care about the validity of the SQL" # rubocop
       end
-      expect(described_class.lines.join).not_to include "SHOW"
+      expect(described_class.lines.join).not_to include 'SHOW'
     end
   end
 
