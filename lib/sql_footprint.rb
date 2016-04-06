@@ -22,7 +22,7 @@ module SqlFootprint
 
     def stop
       @capture = false
-      File.write FILENAME, lines.join(NEWLINE)
+      File.write FILENAME, lines.join(NEWLINE) + NEWLINE
     end
 
     def exclude
