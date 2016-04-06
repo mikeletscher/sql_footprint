@@ -1,5 +1,6 @@
 require 'sql_footprint/version'
 require 'sql_footprint/sql_anonymizer'
+require 'sql_footprint/sql_filter'
 require 'set'
 require 'active_support/notifications'
 
@@ -14,6 +15,7 @@ module SqlFootprint
   class << self
     def start
       @anonymizer = SqlAnonymizer.new
+      @filter     = SqlFilter.new
       @capture    = true
       @lines      = Set.new
     end
@@ -35,7 +37,7 @@ module SqlFootprint
     end
 
     def capture sql
-      return unless @capture
+      return unless @capture && @filter.capture?(sql)
       @lines << @anonymizer.anonymize(sql)
     end
   end

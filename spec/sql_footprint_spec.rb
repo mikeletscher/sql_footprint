@@ -65,6 +65,15 @@ describe SqlFootprint do
       end.to change { described_class.lines.length }.by(+1)
       expect(described_class.lines.join).not_to include 'INSERT INTO \"widgets\"'
     end
+
+    it 'does not write SHOW queries' do
+      begin
+        Widget.connection.execute("SHOW #{SecureRandom.uuid}")
+      rescue
+        "We don't care about the validity of the SQL" # rubocop
+      end
+      expect(described_class.lines.join).not_to include 'SHOW'
+    end
   end
 
   describe '.stop' do
