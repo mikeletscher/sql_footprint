@@ -1,7 +1,7 @@
 module SqlFootprint
   class SqlFilter
     EXCLUDE_REGEXS = [
-      /^SHOW .*$/
+      /\ASHOW\s/
     ].freeze
 
     def capture? sql
