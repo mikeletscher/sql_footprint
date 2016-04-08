@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe SqlFootprint::SqlStatements do
-
   let(:sql_statements) { described_class.new }
 
   describe '#to_a' do
@@ -36,7 +35,6 @@ RSpec.describe SqlFootprint::SqlStatements do
         expect(sql_statements.to_a).to eq statements
       end
     end
-
   end
 
   describe '#add' do
@@ -58,10 +56,10 @@ RSpec.describe SqlFootprint::SqlStatements do
       end
     end
 
-    let(:statements) { ['b', 'c', 'a'] }
+    let(:statements) { %w(b c a) }
 
     it 'sorts the statements given' do
-      expect(statements.sort).to eq ['a', 'b', 'c']
+      expect(statements.sort).to eq %w(a b c)
     end
   end
 

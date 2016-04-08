@@ -3,7 +3,6 @@ require 'active_support/core_ext/module/delegation'
 
 module SqlFootprint
   class SqlStatements
-
     def initialize
       @statements = Set.new
     end
