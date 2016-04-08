@@ -6,8 +6,12 @@ require 'sql_footprint/version'
 Gem::Specification.new do |spec|
   spec.name          = 'sql_footprint'
   spec.version       = SqlFootprint::VERSION
-  spec.authors       = ['Brandon Joyce']
-  spec.email         = ['bjoyce@covermymeds.com']
+  spec.authors       = ['Brandon Joyce', 'Michael Gee', 'Derek Schneider']
+  spec.email         = [
+    'brandon@sonerdy.com',
+    'michaelpgee@gmail.com',
+    'dschneider@covermymeds.com'
+  ]
 
   spec.summary       = 'Keeps your DBA happy.'
   spec.description   = 'Check your footprint file into source control'
