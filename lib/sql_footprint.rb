@@ -1,7 +1,7 @@
 require 'sql_footprint/version'
 require 'sql_footprint/sql_anonymizer'
 require 'sql_footprint/sql_filter'
-require 'set'
+require 'sql_footprint/sql_statements'
 require 'active_support/notifications'
 
 module SqlFootprint
@@ -13,16 +13,18 @@ module SqlFootprint
   end
 
   class << self
+    attr_reader :statements
+
     def start
       @anonymizer = SqlAnonymizer.new
       @filter     = SqlFilter.new
       @capture    = true
-      @lines      = Set.new
+      @statements = SqlStatements.new
     end
 
     def stop
       @capture = false
-      File.write FILENAME, lines.join(NEWLINE) + NEWLINE
+      File.write FILENAME, statements.sort.join(NEWLINE) + NEWLINE
     end
 
     def exclude
@@ -32,13 +34,9 @@ module SqlFootprint
       @capture = true
     end
 
-    def lines
-      @lines.sort
-    end
-
     def capture sql
       return unless @capture && @filter.capture?(sql)
-      @lines << @anonymizer.anonymize(sql)
+      @statements.add @anonymizer.anonymize(sql)
     end
   end
 end
