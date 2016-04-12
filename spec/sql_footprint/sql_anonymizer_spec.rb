@@ -25,6 +25,12 @@ describe SqlFootprint::SqlAnonymizer do
       'SELECT "widgets".* FROM "widgets" ' \
       'WHERE "widgets"."quantity" = number-redacted'
     )
+
+    sql = Widget.where(['quantity != ?', rand(100)]).to_sql
+    expect(anonymizer.anonymize(sql)).to eq(
+      'SELECT "widgets".* FROM "widgets" ' \
+      'WHERE (quantity != number-redacted)'
+    )
   end
 
   it 'formats string literals' do
