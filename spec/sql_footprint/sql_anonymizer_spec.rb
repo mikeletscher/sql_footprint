@@ -25,6 +25,14 @@ describe SqlFootprint::SqlAnonymizer do
       'SELECT "widgets".* FROM "widgets" ' \
       'WHERE "widgets"."quantity" = number-redacted'
     )
+
+    ['>', '<', '!=', '<=', '>='].each do |operator|
+      sql = Widget.where(["quantity #{operator} ?", rand(100)]).to_sql
+      expect(anonymizer.anonymize(sql)).to eq(
+        'SELECT "widgets".* FROM "widgets" ' \
+        "WHERE (quantity #{operator} number-redacted)"
+      )
+    end
   end
 
   it 'formats string literals' do
