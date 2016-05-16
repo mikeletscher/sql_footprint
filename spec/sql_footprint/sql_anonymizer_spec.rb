@@ -4,8 +4,10 @@ describe SqlFootprint::SqlAnonymizer do
   let(:anonymizer) { described_class.new }
 
   it 'formats INSERT statements' do
-    sql = %q{INSERT INTO "widgets" ("created_at", "name") VALUES ('2016-05-1 6 19:16:04.981048', 12345) RETURNING "id"}
-    expect(anonymizer.anonymize(sql)).to eq %q{INSERT INTO "widgets" ("created_at", "name") VALUES (values-redacted) RETURNING "id"}
+    sql = 'INSERT INTO "widgets" ("created_at", "name") VALUES ' +
+    %q{('2016-05-1 6 19:16:04.981048', 12345) RETURNING "id"}
+    expect(anonymizer.anonymize(sql)).to eq 'INSERT INTO "widgets" ' +
+    '("created_at", "name") VALUES (values-redacted) RETURNING "id"'
   end
 
   it 'formats IN clauses' do
