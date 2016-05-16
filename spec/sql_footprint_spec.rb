@@ -24,7 +24,7 @@ describe SqlFootprint do
     it 'formats inserts' do
       Widget.create!
       expect(statements.to_a).to include(
-        'INSERT INTO "widgets" ("created_at", "updated_at") VALUES (?, ?)'
+        'INSERT INTO "widgets" ("created_at", "updated_at") VALUES (values-redacted)'
       )
     end
 
