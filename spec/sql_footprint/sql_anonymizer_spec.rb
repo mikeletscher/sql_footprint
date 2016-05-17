@@ -5,9 +5,9 @@ describe SqlFootprint::SqlAnonymizer do
 
   it 'formats INSERT statements' do
     sql = 'INSERT INTO "widgets" ("created_at", "name") VALUES ' \
-    "'2016-05-1 6 19:16:04.981048', 12345) RETURNING \"id\""
+    "('2016-05-1 6 19:16:04.981048', 12345) RETURNING \"id\""
     expect(anonymizer.anonymize(sql)).to eq 'INSERT INTO "widgets" ' \
-    '("created_at", "name") VALUES (values-redacted) RETURNING \"id\"'
+    '("created_at", "name") VALUES (values-redacted) RETURNING "id"'
   end
 
   it 'formats IN clauses' do
