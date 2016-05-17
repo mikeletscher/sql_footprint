@@ -3,6 +3,13 @@ require 'spec_helper'
 describe SqlFootprint::SqlAnonymizer do
   let(:anonymizer) { described_class.new }
 
+  it 'formats INSERT statements' do
+    sql = 'INSERT INTO "widgets" ("created_at", "name") VALUES ' \
+    "('2016-05-1 6 19:16:04.981048', 12345) RETURNING \"id\""
+    expect(anonymizer.anonymize(sql)).to eq 'INSERT INTO "widgets" ' \
+    '("created_at", "name") VALUES (values-redacted) RETURNING "id"'
+  end
+
   it 'formats IN clauses' do
     sql = Widget.where(name: [SecureRandom.uuid, SecureRandom.uuid]).to_sql
     expect(anonymizer.anonymize(sql)).to eq(
