@@ -3,6 +3,9 @@ require: rubocop-rspec
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
 Metrics/LineLength:
   Max: 100
 
