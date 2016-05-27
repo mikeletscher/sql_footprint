@@ -6,7 +6,7 @@ describe SqlFootprint do
   end
 
   let(:statements) { described_class.capturers[':memory:'].statements }
-  let(:footprint_file_name) { 'footprint.:memory:.sql' }
+  let(:footprint_file_name) { './db/footprint.:memory:.sql' }
 
   describe '.start' do
     before do

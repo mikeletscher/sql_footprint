@@ -79,7 +79,7 @@ describe SqlFootprint::SqlCapturer do
     end
 
     it 'writes to db-specific filename' do
-      expect(File).to receive(:write).with("footprint.#{db_name}.sql", anything)
+      expect(File).to receive(:write).with("db/footprint.#{db_name}.sql", anything)
       subject.write
     end
   end
