@@ -27,7 +27,7 @@ module SqlFootprint
     end
 
     def filename
-      "footprint.#{database_name.split('/').last}.sql"
+      "db/footprint.#{database_name.split('/').last}.sql"
     end
   end
 end
