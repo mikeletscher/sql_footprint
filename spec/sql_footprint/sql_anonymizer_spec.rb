@@ -49,4 +49,12 @@ describe SqlFootprint::SqlAnonymizer do
       'WHERE "widgets"."name" = \'value-redacted\''
     )
   end
+
+  it 'formats string literals inside of LOWER' do
+    sql = Widget.where("name = LOWER('whatever')").to_sql
+    expect(anonymizer.anonymize(sql)).to eq(
+      'SELECT "widgets".* FROM "widgets" ' \
+      'WHERE (name = LOWER(\'value-redacted\'))'
+    )
+  end
 end
