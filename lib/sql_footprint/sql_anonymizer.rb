@@ -2,7 +2,7 @@ module SqlFootprint
   class SqlAnonymizer
     GSUBS = {
       /\sIN\s\((.*)\)/ => ' IN (values-redacted)'.freeze, # IN clauses
-      /\s'(.*)\'/ => " 'value-redacted'".freeze, # literal strings
+      /([\s\(])'(.*)'/ => "\\1'value-redacted'".freeze, # literal strings
       /\s+(!=|=|<|>|<=|>=)\s+[0-9]+/ => ' \1 number-redacted', # numbers
       /\s+VALUES\s+\(.+\)/ => ' VALUES (values-redacted)', # VALUES
     }.freeze
