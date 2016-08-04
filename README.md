@@ -28,19 +28,10 @@ RSpec.configure do |config|
 end
 ```
 
-Minitest (in `test_helper.rb`):
+Minitest (in `test_helper.rb`) add the following:
 ```ruby
-ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
-require 'rails/test_help'
-
 SqlFootprint.start
-
-class ActiveSupport::TestCase
-  fixtures :all
-end
-
-MiniTest::Unit.after_tests { SqlFootprint.stop }
+Minitest.after_run { SqlFootprint.stop }
 ```
 
 After running your specs you'll find a 'footprint.sql' file in your project.
