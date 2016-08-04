@@ -28,6 +28,12 @@ RSpec.configure do |config|
 end
 ```
 
+Minitest (in `test_helper.rb`) add the following:
+```ruby
+SqlFootprint.start
+Minitest.after_run { SqlFootprint.stop }
+```
+
 After running your specs you'll find a 'footprint.sql' file in your project.
 
 #### Excluding Setup Code
